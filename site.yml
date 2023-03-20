@@ -18,23 +18,26 @@
       update_cache: yes
     when: ansible_distribution == "Ubuntu"
 
-- hosts: worksations
+- hosts: workstations
   become: true
   tasks:
+
   - name: install unzip
     package:
       name: unzip
 
   - name: install terraform
+    tags: rws
     unarchive:
-      src: https://releases.hashicorp.com/terraform/0.12.28/terraform 0.12.28 linux amd64.zip
+
+      src: https://releases.hashicorp.com/terraform/0.12.28/terraform_0.12.28_linux_amd64.zip
       dest: /usr/local/bin
       remote_src: yes
       mode: 0755
       owner: root
       group: root
 
-
+ 
 - hosts: web_servers
   become: true
   tasks:
@@ -47,7 +50,6 @@
       owner: root
       group: root
       mode: 0644
-
 
   - name: install apache and php for Ubuntu servers
     tags: apache,apache2,ubuntu
@@ -109,3 +111,30 @@
     package:
       name: samba
       state: latest
+
+
+
+- hosts: all 
+  become: true
+  roles:
+    - base
+
+- hosts: workstations
+  become: true
+  roles:
+    - workstations
+
+- hosts: web_servers
+  become: true
+  roles:
+    - web_servers
+
+- hosts: db_servers
+  become: true
+  roles:
+    - db_servers
+
+- hosts: file_servers
+  become: true
+  roles:
+    - file_servers
